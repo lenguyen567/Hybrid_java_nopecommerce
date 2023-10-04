@@ -1,18 +1,34 @@
 package commons;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+
 import org.openqa.selenium.Alert;
 import org.openqa.selenium.By;
+import org.openqa.selenium.Cookie;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
+import org.openqa.selenium.remote.server.handler.GetAllCookies;
 import org.openqa.selenium.support.Color;
 import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
+
+import com.github.dockerjava.api.model.Driver;
+
+import pageObjects.AddressObjects;
+import pageObjects.ChangePasswordObjects;
+import pageObjects.CustomerInfoObjects;
+import pageObjects.MyProductReviewObjects;
+import pageObjects.OrderObjects;
+import pageObjects.PageGeneratorManager;
+import pageObjects.RewardPointObjects;
+import pageUIs.BasePageUI;
+import pageUIs.HomePageUI;
 
 public class BasePage {
 	private int longTime = 30;
@@ -317,6 +333,67 @@ public class BasePage {
 
 	protected void waitForElementClickable(WebDriver driver, String xpathLocator) {
 		explicitWaitLongTime(driver).until(ExpectedConditions.elementToBeClickable(getByXpath(xpathLocator)));
+	}
+
+	protected List<String> itemListSorting(WebDriver driver, String xpathLocator) {
+		List<String> itemList = new ArrayList<>();
+		for (WebElement element : getListElements(driver, xpathLocator)) {
+			itemList.add(element.getText());
+		}
+		return itemList;
+	}
+
+	
+
+	public CustomerInfoObjects clickToCustomerInfoLink(WebDriver driver) {
+		waitForElementClickable(driver, BasePageUI.CUSTOMER_INFO_LINK);
+		clickToElement(driver, BasePageUI.CUSTOMER_INFO_LINK);
+		return PageGeneratorManager.getCustomerInfoPage(driver);
+	}
+
+	public AddressObjects clickToAddressLink(WebDriver driver) {
+		waitForElementClickable(driver, BasePageUI.ADDRESS_LINK);
+		clickToElement(driver, BasePageUI.ADDRESS_LINK);
+		return PageGeneratorManager.getAddressPage(driver);
+	}
+
+	public OrderObjects clickToOrderLink(WebDriver driver) {
+		waitForElementClickable(driver, BasePageUI.ORDER_LINK);
+		clickToElement(driver, BasePageUI.ORDER_LINK);
+		return PageGeneratorManager.getOrderPage(driver);
+	}
+
+	public RewardPointObjects clickToRewardPointLink(WebDriver driver) {
+		waitForElementClickable(driver, BasePageUI.REWARD_POINT_LINK);
+		clickToElement(driver, BasePageUI.REWARD_POINT_LINK);
+		return PageGeneratorManager.getRewardPointPage(driver);
+	}
+
+	public ChangePasswordObjects clickToChangePasswordLink(WebDriver driver) {
+		waitForElementClickable(driver, BasePageUI.CHANGE_PASSWORD_LINK);
+		clickToElement(driver, BasePageUI.CHANGE_PASSWORD_LINK);
+		return PageGeneratorManager.getChangePasswordPage(driver);
+	}
+
+	public MyProductReviewObjects clickToMyProductReviewLink(WebDriver driver) {
+		waitForElementClickable(driver, BasePageUI.MY_PRODUCT_REVIEWS_LINK);
+		clickToElement(driver, BasePageUI.MY_PRODUCT_REVIEWS_LINK);
+		return PageGeneratorManager.getMyProductReviewPage(driver);
+	}
+	
+	public Set<Cookie> getAllCookies( WebDriver driver) {
+		return driver.manage().getCookies();
+		
+	}
+	
+	public void setCookies ( WebDriver driver, Set<Cookie> cookies) {
+		for (Cookie cookie : cookies) {
+			driver.manage().addCookie(cookie);
+		}
+		sleepInsecond(5);
+	}
+	public void reloadCurrentPage(WebDriver driver) {
+		driver.get(driver.getCurrentUrl());
 	}
 
 	private void sleepInsecond(long timeinSecond) {
